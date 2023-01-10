@@ -113,7 +113,7 @@ async function checkParameters([type,param]) {
     updateGraph(type);
 }
 
-var startDate = "2021-07-01";
+var startDate = "2016-01-01";
 var endDate = "2021-12-31";
 function dateChanged() {
     startDate = (document.getElementById("start").value);

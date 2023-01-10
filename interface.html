@@ -149,9 +149,6 @@
     
                 </p>
 
-            </div>
-
-            <div id="column3">
                 <p id="wind">
                     <strong>Wind</strong></br>
     
@@ -162,6 +159,9 @@
     
                 </p>
 
+            </div>
+
+            <div id="column3">
                 <p id="frost">
                     <strong>Frost days and ice days</strong></br>
     
@@ -224,7 +224,7 @@
                 </br>
 
                 <input type="date" class="date" id="start" name="start"
-                    value="2021-07-01"
+                    value="2016-01-01"
                     min="2016-01-01" max="2021-12-31"
                     onchange="dateChanged()">
             </div>
@@ -237,11 +237,11 @@
 
                 <input type="date" class="date" id="end" name="end"
                     value="2021-12-31"
-                    min="2021-07-01" max="2021-12-31"
+                    min="2016-01-01" max="2021-12-31"
                     onchange="dateChanged()">
             </div>
 
-            <p id="date-choose">Start: 2021-07-01</br>End: 2021-12-31</p>
+            <p id="date-choose">Start: 2016-01-01</br>End: 2021-12-31</p>
         </div>
         <div id="export">
             <h2 id="period-select">Export</h2>
@@ -262,7 +262,7 @@
 
         <div id="result">
             <h2 id="show-result">Visualisations</h2>
-            <div id="">
+            <div id="graph">
                 <canvas id="TmpRain" ></canvas>
                 <canvas id="Gdd" ></canvas>
                 <canvas id="Polar area"></canvas>
