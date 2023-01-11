@@ -1,5 +1,6 @@
 let queries = new Map();
 queries.set("TmpRain", buildQuery_tmpRainStation);
+queries.set("GddRain", buildQuery_GddDaysStation);
 
 //queries.set("TMin", buildQuery_minTempStation);
 //queries.set("TMax", buildQuery_maxTempStation);
@@ -28,7 +29,8 @@ queries.set("summerDays", buildQuery_nbSummerDaysStation);
 
 queries.set("heatDays", buildQuery_nbStressDaysStation);
 
-queries.set("GDD", buildQuery_degreeDaysStation);
+
+
 queries.set("sumGDD", buildQuery_cumulativeDegreeDaysStation);
 
 
@@ -97,7 +99,7 @@ function buildQuery_tmpRainStation(stationName,startDate,endDate){
     PREFIX wes-attribute: <http://ns.inria.fr/meteo/observationslice/attribute#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     
-    SELECT distinct ?stationName ?date  ?temp_avg ?temp_min  ?temp_max (?temp_max -  ?temp_min) as ?temp_diff ?rainfall ?gdd
+    SELECT distinct ?stationName ?date  ?temp_avg ?temp_min  ?temp_max (?temp_max -  ?temp_min) as ?temp_diff ?rainfall
    WHERE
     {
         VALUES ?stationName {"`+ stationName +`"}
@@ -115,7 +117,6 @@ function buildQuery_tmpRainStation(stationName,startDate,endDate){
         wes-measure:rainfall24h ?r]  .
         ?station a weo:WeatherStation ; rdfs:label ?stationName.
         BIND( IF( ?r > 0 , ?r, 0)  as ?rainfall)
-        BIND( IF( ?temp_avg > 10 , ?temp_avg - 10, 0)  as ?gdd)
         FILTER (?date >=xsd:date("`+ startDate +`"))
         FILTER (?date <=xsd:date("`+ endDate +`"))
            }
@@ -124,8 +125,6 @@ function buildQuery_tmpRainStation(stationName,startDate,endDate){
     return query
 }
 //BIND( IF( ?temp_avg > 10 , ?temp_avg - 10, 0)  as ?gdd)
-
-
 
 
 
@@ -739,6 +738,39 @@ function buildQuery_nbStressDaysStation(stationName, startDate, endDate) {
             FILTER (?date <=xsd:date(?dateFinPeriod))
         }
     }
+    `
+    return query;
+}
+
+function buildQuery_GddDaysStation(stationName, startDate, endDate) {
+    let query = `
+    PREFIX wes: <http://ns.inria.fr/meteo/observationslice/>
+    PREFIX weo: <http://ns.inria.fr/meteo/ontology/>
+    PREFIX qb:  <http://purl.org/linked-data/cube#>
+    PREFIX wes-dimension: <http://ns.inria.fr/meteo/observationslice/dimension#>
+    PREFIX wes-measure: <http://ns.inria.fr/meteo/observationslice/measure#>
+    PREFIX wes-attribute: <http://ns.inria.fr/meteo/observationslice/attribute#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    
+    SELECT distinct  ?stationName ?date  ?gdd ?rainfall WHERE
+    {
+        VALUES ?stationName {"`+ stationName +`"}
+        ?s  a qb:Slice ;
+        wes-dimension:station ?station  ;
+    
+        wes-dimension:year ?year;
+        qb:observation [
+        a qb:Observation ;
+        wes-attribute:observationDate ?date ;
+        wes-measure:avgDailyTemperature ?temp_avg;
+        wes-measure:rainfall24h ?r] .
+        ?station a weo:WeatherStation ; rdfs:label ?stationName.
+        BIND( IF( ?r > 0 , ?r, 0)  as ?rainfall)
+        BIND( IF( ?temp_avg > 10 , ?temp_avg - 10, 0)  as ?gdd)
+        FILTER (?date >=xsd:date("`+ startDate +`"))
+        FILTER (?date <=xsd:date("`+ endDate +`"))
+    }
+    ORDER BY ?date
     `
     return query;
 }

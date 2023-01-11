@@ -194,12 +194,12 @@
                 <p id="heating">
                     <strong>Growing degree days</strong></br>
     
-                    <input TYPE=CHECKBOX name="GDD" id="GDD" type="CHECKBOX" onclick="checkParameters(['','GDD'])"> Growing degree days (GDD)
+                    <input TYPE=CHECKBOX name="Gdd" id="Gdd" type="CHECKBOX" onclick="checkParameters(['GddRain','Gdd'])"> Growing degree days (GDD)
                     <t class="tooltipParam">[?]
                         <span class="tooltiptextParam">Growing degree days represents the awerage temperature for each days minus 10°C</span>
                     </t></br>
     
-                    <input TYPE=CHECKBOX name="sumGDD" id="sumGDD" type="CHECKBOX" onclick="checkParameters(['','sumGDD'])"> Accumulated growing degree days (sumGDD)
+                    <input TYPE=CHECKBOX name="sumGdd" id="sumGdd" type="CHECKBOX" onclick="checkParameters(['GddRain','sumGdd'])"> Accumulated growing degree days (sumGDD)
                     <t class="tooltipParam">[?]
                         <span class="tooltiptextParam">Accumulated growing degree days represents the sum of awerage temperature for each days minus 10°C</span>
                     </t></br>
@@ -264,7 +264,7 @@
             <h2 id="show-result">Visualisations</h2>
             <div id="graph">
                 <canvas id="TmpRain" ></canvas>
-                <canvas id="Gdd" ></canvas>
+                <canvas id="GddRain" ></canvas>
                 <canvas id="Polar area"></canvas>
                 <div id="my_dataviz"></div>  
             </div>

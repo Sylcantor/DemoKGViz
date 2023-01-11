@@ -21,12 +21,8 @@ function drawComboChart(data, canvasElement) {
                 }]
             },
             onClick: (e) => {
-                //get the value of the clicked bar
-            
-                types.get("TmpRain").forEach(element => {
-                    //check the box corresponding to the clicked bar
-                    //call checkparameters
-                });
+
+                console.log("Click on the chart")
 
                 const activeElement = comboChart.getElementAtEvent(e)[0];
                 if (activeElement) {
@@ -44,6 +40,16 @@ function drawComboChart(data, canvasElement) {
                         console.log("Draw the rainfall lineChart of the day by 3 hours");
                     }
                 }
+
+            
+                /*
+                types.get("TmpRain").forEach(element => {
+                    //check the box corresponding to the clicked bar
+                    //call checkparameters
+                });
+
+
+                */
             }
         }
     });

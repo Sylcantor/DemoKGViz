@@ -77,21 +77,25 @@ function stationChanged() {
     dataCalc.clear();
     //clear all graphs
     types.forEach(async(value, key) => {
-        const canvasElement = document.getElementById(key);
-        const ctx = canvasElement.getContext('2d');
-        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        if(graphLoaded.has(key)){
-            graphLoaded.get(key).destroy();
-            graphLoaded.delete(key);
+        //check if there is values
+        if(value.length > 0){
+            const canvasElement = document.getElementById(key);
+            const ctx = canvasElement.getContext('2d');
+            ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            if(graphLoaded.has(key)){
+                graphLoaded.get(key).destroy();
+                graphLoaded.delete(key);
+            }
+            await updateData(key);
+            updateGraph(key);
         }
-        await updateData(key);
-        updateGraph(key);
     });
 }
 
 var types = new Map();
 
 types.set("TmpRain", []);
+types.set("GddRain", []);
 //types.set("RainDay", []);
 
 
@@ -129,10 +133,12 @@ function dateChanged() {
         const canvasElement = document.getElementById(key);
         const ctx = canvasElement.getContext('2d');
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        graphLoaded.get(key).destroy();
-        graphLoaded.delete(key);
-        await updateData(key);
-        updateGraph(key);
+        if(graphLoaded.has(key)){
+            graphLoaded.get(key).destroy();
+            graphLoaded.delete(key);
+            await updateData(key);
+            updateGraph(key);
+        }
     });
 }
 
@@ -183,6 +189,9 @@ async function updateGraph(type) {
 function formatData(type,data) {
     if(type == "TmpRain") {
         return formatDataTmpRain(data);
+    }
+    else if(type == "GddRain") {
+        return formatDataGddRain(data);
     }
     console.log("formatData");
 }
@@ -247,6 +256,87 @@ function formatDataTmpRain(data) {
         borderColor: "rgba(255, 159, 64, 1)",
         borderWidth: 1,
         id : "TMax"
+    });
+
+    d.values.push({
+        type: "bar",
+        label: "Précipitations (mm)",
+        data: rainfall_data,
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+        id : "rainDay"
+    });
+    return d;
+}
+
+function formatDataGddRain(data) {
+    let d = {
+        date: [],
+        values: []
+    }
+
+    //for each element in the data array
+    data.forEach(element => {
+        //add the date to the date array
+        d.date.push(element.date.value);
+    });
+
+    let gdd_data = [];
+    data.forEach(element => {
+        gdd_data.push(element.gdd.value);
+    });
+
+    let rainfall_data = [];
+    data.forEach(element => {
+        rainfall_data.push(element.rainfall.value);
+    });
+
+    let sum_gdd_data = [];
+    //calculate the sum of gdd and add it to the array
+    let sum = 0;
+    gdd_data.forEach(element => {
+        //convert the string to a number
+        sum += parseFloat(element);
+        sum_gdd_data.push(sum);
+    });
+
+    let sum_rainfall_data = [];
+    //calculate the sum of rainfall and add it to the array
+    sum = 0;
+    rainfall_data.forEach(element => {
+        sum += parseFloat(element);
+        sum_rainfall_data.push(sum);
+    });
+
+    d.values.push({
+        type: "line",
+        label: "Cumul Gdd (°C)",
+        data: sum_gdd_data,
+        backgroundColor: "rgba(255, 159, 64, 0)",
+        borderColor: "rgba(255, 159, 64, 1)",
+        borderWidth: 1,
+        id : "sumGdd"
+    });
+
+    d.values.push({
+        type: "line",
+        label: "Cumul Precipitation (mm)",
+        data: sum_rainfall_data,
+        backgroundColor: "rgba(54, 162, 235, 0)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+        id : "sumRainDay"
+    });
+
+    d.values.push({
+        type: "bar",
+        label: "Gdd (°C)",
+        data: gdd_data,
+        backgroundColor: "rgba(255, 159, 64, 0.2)",
+        borderColor: "rgba(255, 159, 64, 1)",
+        borderWidth: 1,
+        id : "Gdd"
     });
 
     d.values.push({
