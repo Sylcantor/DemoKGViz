@@ -1,5 +1,7 @@
 function drawComboChart(data, canvasElement) {
 
+    
+
     console.log(data.date);
     console.log(data.values);
 
@@ -13,44 +15,7 @@ function drawComboChart(data, canvasElement) {
             datasets: data.values
         },
         options: {
-            scales: {
-                yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-                }]
-            },
-            onClick: (e) => {
-
-                console.log("Click on the chart")
-
-                const activeElement = comboChart.getElementAtEvent(e)[0];
-                if (activeElement) {
-                    const datasetIndex = activeElement._datasetIndex;
-                    const index = activeElement._index;
-                    const value = comboChart.data.datasets[datasetIndex].data[index];
-                    const xValue = comboChart.data.labels[index];
-                    const label = comboChart.data.datasets[datasetIndex].label;
-                    const id = comboChart.data.datasets[datasetIndex].id;
-                    console.log(label);
-                    console.log(xValue);
-                    console.log(value);
-
-                    if(id == "rainDay"){
-                        console.log("Draw the rainfall lineChart of the day by 3 hours");
-                    }
-                }
-
-            
-                /*
-                types.get("TmpRain").forEach(element => {
-                    //check the box corresponding to the clicked bar
-                    //call checkparameters
-                });
-
-
-                */
-            }
+            responsive: true
         }
     });
     return comboChart;
@@ -63,13 +28,19 @@ function updateComboChart(comboChart, type) {
     //for each element in type array
     // set hiden to false
     // else set hiden to true
+
     comboChart.data.datasets.forEach((dataset) => {
+        console.log(type)
         if(type.includes(dataset.id)) {
             dataset.hidden = false;
         } else {
             dataset.hidden = true;
         }
     });
+    // a revoir il faudrait associer un id à plusieurs type dans le html
+    if(types.get("TmpRain").includes("rainDay")){
+        comboChart.data.datasets.find(dataset => dataset.id === "rainDay").hidden = false;
+    }
     comboChart.update();
     console.log("updateComboChart");
 }

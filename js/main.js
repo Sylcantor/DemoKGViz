@@ -96,6 +96,7 @@ var types = new Map();
 
 types.set("TmpRain", []);
 types.set("GddRain", []);
+types.set("Numb", []);
 //types.set("RainDay", []);
 
 
@@ -109,7 +110,7 @@ async function checkParameters([type,param]) {
         parameters = parameters.filter(function(item) {
             return item !== param;
         });
-        types.get(type).pop(param);
+        types.get(type).splice(types.get(type).indexOf(param), 1);
     }
     document.getElementById("parameters-choose").innerHTML = "Parameters selected : " + parameters;
 
@@ -160,6 +161,12 @@ async function updateData(type) {
 
 var graphLoaded = new Map();
 
+var graphType = new Map();
+
+graphType.set("TmpRain", [drawComboChart,updateComboChart]);
+graphType.set("GddRain", [drawComboChart,updateComboChart]);
+graphType.set("Numb", [drawPolarChart,updatepolarChart]);
+
 async function updateGraph(type) {
     if(graphLoaded.get(type) == undefined) {
         //check if there is parameters selected
@@ -168,8 +175,16 @@ async function updateGraph(type) {
         }
         console.log("load graph");
         const canvasElement = document.getElementById(type);
-        let c = drawComboChart(dataCalc.get(type),canvasElement);
-        updateComboChart(c,types.get(type));
+        //let c = drawComboChart(dataCalc.get(type),canvasElement);
+        document.getElementsByClassName("chart-container-" + type)[0].style.width = "100%";
+
+        document.getElementsByClassName("chart-container-" + type)[0].style.height = "50vh";
+
+
+        let c = graphType.get(type)[0](dataCalc.get(type),canvasElement);
+        //updateComboChart(c,types.get(type));
+        graphType.get(type)[1](c,types.get(type));
+
         graphLoaded.set(type, c);
     } else {
         //if yes, update the graph
@@ -180,9 +195,15 @@ async function updateGraph(type) {
             ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             graphLoaded.get(type).destroy();
             graphLoaded.delete(type);
+           document.getElementsByClassName("chart-container-" + type)[0].style.width = "0%";
+
+           document.getElementsByClassName("chart-container-" + type)[0].style.height = "0vh";
+
+
             return;
         }
-        updateComboChart(graphLoaded.get(type),types.get(type));
+        //updateComboChart(graphLoaded.get(type),types.get(type));
+        graphType.get(type)[1](graphLoaded.get(type),types.get(type));
     }
 }
 
@@ -193,6 +214,13 @@ function formatData(type,data) {
     else if(type == "GddRain") {
         return formatDataGddRain(data);
     }
+    else if(type == "Numb") {
+        return formatDataNumb(data);
+    }
+    else if(type == "Numb") {
+        return formatDataNumb(data);
+    }
+
     console.log("formatData");
 }
 
@@ -230,12 +258,14 @@ function formatDataTmpRain(data) {
         type: "line",
         label: "Température moyenne (°C)",
         data: temp_avg_data,
-        backgroundColor: "rgba(255, 99, 132, 0)",
-        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 159, 64, 0)",
+        borderColor: "rgba(255, 159, 64, 1)",
         borderWidth: 1,
         id : "TMean"
     });
     //rgba blue
+
+
 
     d.values.push({
         type: "line",
@@ -252,8 +282,8 @@ function formatDataTmpRain(data) {
         type: "line",
         label: "Température maximale (°C)",
         data: temp_max_data,
-        backgroundColor: "rgba(255, 159, 64, 0)",
-        borderColor: "rgba(255, 159, 64, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0)",
+        borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
         id : "TMax"
     });
@@ -313,8 +343,8 @@ function formatDataGddRain(data) {
         type: "line",
         label: "Cumul Gdd (°C)",
         data: sum_gdd_data,
-        backgroundColor: "rgba(255, 159, 64, 0)",
-        borderColor: "rgba(255, 159, 64, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0)",
+        borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
         id : "sumGdd"
     });
@@ -326,15 +356,15 @@ function formatDataGddRain(data) {
         backgroundColor: "rgba(54, 162, 235, 0)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
-        id : "sumRainDay"
+        id : "sumRain"
     });
 
     d.values.push({
         type: "bar",
         label: "Gdd (°C)",
         data: gdd_data,
-        backgroundColor: "rgba(255, 159, 64, 0.2)",
-        borderColor: "rgba(255, 159, 64, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
         id : "Gdd"
     });
@@ -348,6 +378,55 @@ function formatDataGddRain(data) {
         borderWidth: 1,
         id : "rainDay"
     });
+    return d;
+}
+
+function formatDataNumb(data) {
+    let d = {
+        labels: ['Frost', 'Heat', 'Ice', 'Rainy', 'Summer', 'Wet','High wind'],
+        values: []
+    }
+
+    let numbers = [];
+    //iterate over the data[0] object
+    for (let key in data[0]) {
+        //check if the key is a number
+        if (data[0][key].type === "typed-literal" && data[0][key].datatype === "http://www.w3.org/2001/XMLSchema#integer") {
+            //add the number to the numbers array
+            numbers.push(data[0][key].value);
+        }
+    }
+
+    d.values.push(
+        {
+            label: ['Nombre de jours '],
+            data: numbers,
+            backgroundColor: [
+                'rgba(0, 0, 255, 0.2)',
+                'rgba(255, 145, 145, 0.2)',
+                'rgba(0, 255, 255, 0.2)',
+                'rgba(0, 150, 255, 0.2)',
+                'rgba(255, 0, 0, 0.2)',
+
+                'rgba(90, 120, 110, 0.2)',
+                'rgba(0, 160, 0, 0.2)',
+
+            ],
+            borderColor: [
+                'rgba(0, 0, 255, 1)',
+                'rgba(255, 145, 145, 1)',
+                'rgba(0, 255, 255, 1)',
+                'rgba(0, 150, 255, 1)',
+                'rgba(255, 0, 0, 1)',
+
+                'rgba(90, 120, 110, 1)',
+                'rgba(0, 160, 0, 1)',
+
+            ],
+            borderWidth: 1
+        }
+    );
+
     return d;
 }
 
