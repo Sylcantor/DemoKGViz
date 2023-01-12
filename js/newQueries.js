@@ -1,7 +1,7 @@
 let queries = new Map();
 queries.set("TmpRain", buildQuery_tmpRainStation);
 queries.set("GddRain", buildQuery_GddDaysStation);
-queries.set("Numb",buildQuery_nbStatsDaysStation2)
+queries.set("Numb",buildQuery_nbStatsDaysStation)
 
 //queries.set("TMin", buildQuery_minTempStation);
 //queries.set("TMax", buildQuery_maxTempStation);
@@ -126,41 +126,8 @@ function buildQuery_tmpRainStation(stationName,startDate,endDate){
     return query
 }
 
+
 function buildQuery_nbStatsDaysStation(stationName,startDate,endDate) {
-    let query = `
-    PREFIX wes: <http://ns.inria.fr/meteo/observationslice/>
-    PREFIX weo: <http://ns.inria.fr/meteo/ontology/>
-    PREFIX qb:  <http://purl.org/linked-data/cube#>
-    PREFIX wes-dimension: <http://ns.inria.fr/meteo/observationslice/dimension#>
-    PREFIX wes-measure: <http://ns.inria.fr/meteo/observationslice/measure#>
-    PREFIX wes-attribute: <http://ns.inria.fr/meteo/observationslice/attribute#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    select ?stationName  ?dateDebPeriod ?dateFinPeriod (sum(if(?temp_min<0.0, 1, 0)) as ?nbIceDays ) (sum(if(?temp_max<0.0, 1, 0)) as ?nbFrostDays) (sum(if(?rainfall>0.0, 1, 0)) as ?nbRainyDays) (sum(if(?temp_min>20.0, 1, 0)) as ?nbHeatDays ) (sum(if(?temp_max>20.0, 1, 0)) as ?nbSummerDays)  where
-    {
-       
-        VALUES ?stationName {"`+ stationName +`"}
-        VALUES ?dateDebPeriod {"`+ startDate +`"}
-        VALUES ?dateFinPeriod {"`+ endDate +`"}
-
-        ?s  a qb:Slice ;
-        wes-dimension:station ?station  ;
-    
-        wes-dimension:year ?year;
-        qb:observation [
-        a qb:Observation ;
-        wes-attribute:observationDate ?date ;
-        wes-measure:minDailyTemperature ?temp_min; 
-       wes-measure:maxDailyTemperature ?temp_max; 
-        wes-measure:rainfall24h ?rainfall] .
-        ?station a weo:WeatherStation ; rdfs:label ?stationName.
-        FILTER (?date >=xsd:date(?dateDebPeriod))
-        FILTER (?date <=xsd:date(?dateFinPeriod))
-      }
-    `
-    return query
-}
-
-function buildQuery_nbStatsDaysStation2(stationName,startDate,endDate) {
     let query = `
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX wes: <http://ns.inria.fr/meteo/observationslice/>
