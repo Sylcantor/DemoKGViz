@@ -383,7 +383,7 @@ function formatDataGddRain(data) {
 
 function formatDataNumb(data) {
     let d = {
-        labels: ['Frost', 'Heat', 'Ice', 'Rainy', 'Summer', 'Wet','High wind'],
+        labels: ['Frost days', 'Rainy days', 'Heat days', 'Summer days', 'Wet days','High wind days'],
         values: []
     }
 
@@ -403,23 +403,33 @@ function formatDataNumb(data) {
             data: numbers,
             backgroundColor: [
                 'rgba(0, 0, 255, 0.2)',
-                'rgba(255, 145, 145, 0.2)',
-                'rgba(0, 255, 255, 0.2)',
+
                 'rgba(0, 150, 255, 0.2)',
+
+                'rgba(255, 145, 145, 0.2)',
+
+                //'rgba(0, 255, 255, 0.2)',
+
                 'rgba(255, 0, 0, 0.2)',
 
                 'rgba(90, 120, 110, 0.2)',
+
                 'rgba(0, 160, 0, 0.2)',
 
             ],
             borderColor: [
                 'rgba(0, 0, 255, 1)',
-                'rgba(255, 145, 145, 1)',
-                'rgba(0, 255, 255, 1)',
+
                 'rgba(0, 150, 255, 1)',
+
+                'rgba(255, 145, 145, 1)',
+
+                //'rgba(0, 255, 255, 1)',
+
                 'rgba(255, 0, 0, 1)',
 
                 'rgba(90, 120, 110, 1)',
+
                 'rgba(0, 160, 0, 1)',
 
             ],
