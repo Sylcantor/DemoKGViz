@@ -15,7 +15,22 @@ function drawComboChart(data, canvasElement) {
             datasets: data.values
         },
         options: {
-            responsive: true
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: true,
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                        console.log(tooltipItem,data,label);
+                        if (label) {
+                            label += ': bonjour ';
+                        }
+                        label += Math.round(tooltipItem.yLabel * 100) / 100;
+                        return label;
+                    }
+                }
+            },
         }
     });
     return comboChart;
